@@ -1,6 +1,17 @@
 package main
 
-import "net/http"
+import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"strconv"
+	"time"
+
+	"quotablegooofs.prajjmon.net/internal/models"
+)
 
 func (app *application) randomJoke(w http.ResponseWriter, r *http.Request) {
 	joke := `{"joke": ["I told them I wanted to be a comedian, and they laughed; then I became a comedian, no one's laughing now"], "source": "Unknown"}`
@@ -14,4 +25,75 @@ func (app *application) randomQuote(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte(quote))
+}
+
+func (app *application) getJoke(w http.ResponseWriter, r *http.Request) {
+
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || id < 1 {
+		http.NotFound(w, r)
+		return
+	}
+
+	joke, err := app.jokes.Get(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			http.NotFound(w, r)
+		} else {
+			app.serverError(w, r, err)
+			return
+		}
+	}
+
+	jsonJoke, err := json.Marshal(joke)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	// Append a newline to the JSON. This is just a small nicety to make it easier to view
+	// in terminal applications.
+	jsonJoke = append(jsonJoke, '\n')
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonJoke)
+}
+
+func (app *application) insertJoke(w http.ResponseWriter, r *http.Request) {
+
+	defer r.Body.Close()
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	body = bytes.TrimSpace(body)
+	var joke models.Joke
+	err = json.Unmarshal([]byte(body), &joke)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	if errs := joke.Validate(); len(errs) > 0 {
+		app.clientError(w, r, http.StatusBadRequest, errs)
+		return
+	}
+
+	now := time.Now()
+	joke.CreatedAt = now
+	joke.UpdatedAt = now
+
+	//TODO: Update Insert to return the Joke object back so we can send it to user
+	id, err := app.jokes.Insert(joke)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	responseBody := fmt.Sprintf("{\"jokeId\": %d}", id)
+	w.Write([]byte(responseBody))
+
 }
