@@ -69,17 +69,17 @@ type JokeModel struct {
 	Dbpool *pgxpool.Pool
 }
 
-func (j *JokeModel) Insert(joke Joke) (int, error) {
+func (j *JokeModel) Insert(joke Joke) (Joke, error) {
 	sqlStatement := `INSERT INTO jokes(joke_type, content, source, created_at, updated_at) 
-	VALUES ($1, $2, $3, $4, $5) RETURNING id`
+	VALUES ($1, $2, $3, $4, $5) RETURNING id, joke_type, content, source, created_at, updated_at`
 
-	var id int
-	err := j.Dbpool.QueryRow(context.Background(), sqlStatement, joke.JokeType, joke.Content, joke.Source, joke.CreatedAt, joke.UpdatedAt).Scan(&id)
+	var jokeFromDb Joke
+	err := j.Dbpool.QueryRow(context.Background(), sqlStatement, joke.JokeType, joke.Content, joke.Source, joke.CreatedAt, joke.UpdatedAt).Scan(&jokeFromDb.Id, &jokeFromDb.JokeType, &jokeFromDb.Content, &jokeFromDb.Source, &jokeFromDb.CreatedAt, &jokeFromDb.UpdatedAt)
 	if err != nil {
-		return 0, err
+		return Joke{}, err
 	}
 
-	return id, nil
+	return jokeFromDb, nil
 }
 
 func (j *JokeModel) Get(id int) (Joke, error) {
