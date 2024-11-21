@@ -48,4 +48,12 @@ create table jokes (
 	created_at TIMESTAMP NOT NULL,
 	updated_at TIMESTAMP NOT null
 );
+
+create table quotes (
+	id SERIAL NOT NULL PRIMARY KEY ,
+	content jsonb NOT NULL,
+	source TEXT NOT NULL,
+	created_at TIMESTAMP NOT NULL,
+	updated_at TIMESTAMP NOT null
+);
 ```

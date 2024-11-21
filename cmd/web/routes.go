@@ -13,6 +13,8 @@ func (app *application) routes() http.Handler {
 
 	// Quotes related routes
 	mux.HandleFunc("GET /random-quote", app.randomQuote)
+	mux.HandleFunc("GET /quote/{id}", app.getQuote)
+	mux.HandleFunc("POST /quote", app.insertQuote)
 
 	return mux
 }

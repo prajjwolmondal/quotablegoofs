@@ -14,6 +14,7 @@ import (
 type application struct {
 	logger *slog.Logger
 	jokes  *models.JokeModel
+	quotes *models.QuoteModel
 }
 
 func main() {
@@ -36,7 +37,8 @@ func main() {
 
 	app := application{
 		logger: logger,
-		jokes:  &models.JokeModel{Dbpool: dbpool},
+		jokes:  &models.JokeModel{DbPool: dbpool},
+		quotes: &models.QuoteModel{DbPool: dbpool},
 	}
 
 	server := &http.Server{

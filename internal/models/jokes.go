@@ -66,7 +66,7 @@ func (joke *Joke) Validate() []error {
 }
 
 type JokeModel struct {
-	Dbpool *pgxpool.Pool
+	DbPool *pgxpool.Pool
 }
 
 func (j *JokeModel) Insert(joke Joke) (Joke, error) {
@@ -74,7 +74,7 @@ func (j *JokeModel) Insert(joke Joke) (Joke, error) {
 	VALUES ($1, $2, $3, $4, $5) RETURNING id, joke_type, content, source, created_at, updated_at`
 
 	var jokeFromDb Joke
-	err := j.Dbpool.QueryRow(context.Background(), sqlStatement, joke.JokeType, joke.Content, joke.Source, joke.CreatedAt, joke.UpdatedAt).Scan(&jokeFromDb.Id, &jokeFromDb.JokeType, &jokeFromDb.Content, &jokeFromDb.Source, &jokeFromDb.CreatedAt, &jokeFromDb.UpdatedAt)
+	err := j.DbPool.QueryRow(context.Background(), sqlStatement, joke.JokeType, joke.Content, joke.Source, joke.CreatedAt, joke.UpdatedAt).Scan(&jokeFromDb.Id, &jokeFromDb.JokeType, &jokeFromDb.Content, &jokeFromDb.Source, &jokeFromDb.CreatedAt, &jokeFromDb.UpdatedAt)
 	if err != nil {
 		return Joke{}, err
 	}
@@ -88,7 +88,7 @@ func (j *JokeModel) Get(id int) (Joke, error) {
 	WHERE id = $1`
 
 	var joke Joke
-	err := j.Dbpool.QueryRow(context.Background(), sqlStatement, id).Scan(&joke.Id, &joke.JokeType, &joke.Content, &joke.Source, &joke.CreatedAt, &joke.UpdatedAt)
+	err := j.DbPool.QueryRow(context.Background(), sqlStatement, id).Scan(&joke.Id, &joke.JokeType, &joke.Content, &joke.Source, &joke.CreatedAt, &joke.UpdatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Joke{}, ErrNoRecord

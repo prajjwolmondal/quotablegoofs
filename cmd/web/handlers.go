@@ -50,10 +50,6 @@ func (app *application) getJoke(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Append a newline to the JSON. This is just a small nicety to make it easier to view
-	// in terminal applications.
-	jsonJoke = append(jsonJoke, '\n')
-
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonJoke)
 }
@@ -98,4 +94,73 @@ func (app *application) insertJoke(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jokeAsJson)
+}
+
+func (app *application) getQuote(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || id < 1 {
+		http.NotFound(w, r)
+		return
+	}
+
+	quote, err := app.quotes.Get(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			http.NotFound(w, r)
+		} else {
+			app.serverError(w, r, err)
+			return
+		}
+	}
+
+	jsonQuote, err := json.Marshal(quote)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonQuote)
+}
+
+func (app *application) insertQuote(w http.ResponseWriter, r *http.Request) {
+
+	defer r.Body.Close()
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	body = bytes.TrimSpace(body)
+	var quote models.Quote
+	err = json.Unmarshal([]byte(body), &quote)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	if errs := quote.Validate(); len(errs) > 0 {
+		app.clientError(w, r, http.StatusBadRequest, errs)
+		return
+	}
+
+	now := time.Now()
+	quote.CreatedAt = now
+	quote.UpdatedAt = now
+
+	quote, err = app.quotes.Insert(quote)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	quoteJson, err := json.Marshal(quote)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(quoteJson)
 }
