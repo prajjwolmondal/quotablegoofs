@@ -11,10 +11,23 @@ Currently these are the goals of this project:
 3. Provide end-users a way to upvote/downvote the jokes & quotes so that unpopular ones aren't shown as frequently
 
 ## Tools used
-- Go
-- PostgreSQL
+- Go/golang (v1.23.2)
 - [air-verse/air](https://github.com/air-verse/air) - provide live reload functionality while developing locally
-- [jackc/pgx](https://github.com/jackc/pgx) - PostgreSQL driver
+- PostgreSQL
+	- Used `psql` and [DBeaver](https://dbeaver.com/) for DB commands and GUI.
+- [jackc/pgx](https://github.com/jackc/pgx) - PostgreSQL driver for Go. 
+	- This project utilizes the [pgxpool](https://pkg.go.dev/github.com/jackc/pgx/v5@v5.7.1/pgxpool) package to have a concuurency safe connections to the DB via a connection pool.
+- Docker 
+- Google Cloud Platform
+	- Artifact Registry - holds the docker images
+	- Secret Manager - holds sensitive information required by the application (e.g. DB credentials)
+	- Cloud SQL - hosts the PostgreSQL server
+	- Cloud Run - deploys the server in a container using the images in the Artifact Registry.
+- [REST Client VS code extension](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) - for manual testing of the API (see `api_test.txt` for examples)
+
+## Architecture
+
+![Architecture diagram of quotablegoofs](https://docs.google.com/drawings/d/e/2PACX-1vStlM5h46sGZBBEFQk08ugp1uL74L3WAXiVg6iF6OcFhctIKk2EYvU0N2w9YIbT11jQQFsgd6GQyoTW/pub?w=1288&h=688)
 
 ## Setup
 
