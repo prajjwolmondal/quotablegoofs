@@ -37,7 +37,7 @@ func (quote *Quote) Validate() []error {
 	}
 
 	if quote.Source == "" {
-		errs = append(errs, errors.New("field 'source' cannot be empty, if source isn't known then \"anonymous\" is valid"))
+		errs = append(errs, errors.New("field 'source' cannot be empty, if source isn't known then 'anonymous' or 'unkown' is valid"))
 	}
 
 	return errs

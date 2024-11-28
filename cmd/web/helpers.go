@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
 	"runtime/debug"
 )
 
@@ -41,4 +43,13 @@ func (app *application) clientError(w http.ResponseWriter, r *http.Request, stat
 		app.serverError(w, r, err)
 	}
 	http.Error(w, string(jsonData), status)
+}
+
+func getEnvVar(varName string) (string, error) {
+	value := os.Getenv(varName)
+	if value == "" {
+		return "", fmt.Errorf("%s environment variable not set", value)
+	}
+
+	return value, nil
 }

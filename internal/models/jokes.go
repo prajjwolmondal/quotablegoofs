@@ -55,7 +55,7 @@ func (joke *Joke) Validate() []error {
 	}
 
 	if joke.Source == "" {
-		errs = append(errs, errors.New("field 'source' cannot be empty, if source isn't known then anonymous is valid"))
+		errs = append(errs, errors.New("field 'source' cannot be empty, if source isn't known then 'anonymous' or 'unkown' is valid"))
 	}
 
 	if !joke.JokeType.IsValid() {

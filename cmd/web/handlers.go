@@ -12,6 +12,7 @@ import (
 	"quotablegooofs.prajjmon.net/internal/models"
 )
 
+// TODO: Update this to actually be random
 func (app *application) randomJoke(w http.ResponseWriter, r *http.Request) {
 	joke := `{"joke": ["I told them I wanted to be a comedian, and they laughed; then I became a comedian, no one's laughing now"], "source": "Unknown"}`
 
@@ -19,6 +20,7 @@ func (app *application) randomJoke(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(joke))
 }
 
+// TODO: Update this to actually be random
 func (app *application) randomQuote(w http.ResponseWriter, r *http.Request) {
 	quote := `{"quote": "An ounce of action is worth a ton of theory.", "source": "Friedrich Engels"}`
 
@@ -107,6 +109,7 @@ func (app *application) getQuote(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, models.ErrNoRecord) {
 			http.NotFound(w, r)
+			return
 		} else {
 			app.serverError(w, r, err)
 			return

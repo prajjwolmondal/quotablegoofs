@@ -4,20 +4,59 @@
 GET http://localhost:8000/random-joke
 
 ### 
-GET http://localhost:8000/joke/3
-### 
+GET http://localhost:8000/joke/1
+###  
+# Valid POST one liner joke
 
 POST http://localhost:8000/joke
 content-type: application/json
 
 {
     "joke_type": "oneLiner",
-    "content": "{\"text\": \"TODO: insert something funny\"}",
-    "source": "Prajjwol"
+    "content": "{\"text\": \"I hate Russian dolls, they're so full of themselves.\"}",
+    "source": "unknown"
+}
+
+### 
+# Valid POST multi line joke
+
+POST http://localhost:8000/joke
+content-type: application/json
+
+{
+    "joke_type": "multiLiner",
+    "content": "{\"lines\":  [\"Why did the chicken go to the seance?\", \"To talk to the other side.\"]}",
+    "source": "unknown"
+}
+
+### 
+# Valid POST knock knock joke
+
+POST http://localhost:8000/joke
+content-type: application/json
+
+{
+    "joke_type": "knockKnock",
+    "content": "{\"lines\": [\"Knock, knock.\", \"Who's there?\", \"Atch.\", \"Atch who?\", \"Bless you!\"]}",
+    "source": "unknown"
 }
 
 ### 
 
+GET http://localhost:8000/quote/1
+### 
+# Valid POST quote
+
+POST http://localhost:8000/quote
+content-type: application/json
+
+{
+    "content": "{\"text\": \"Don't take life too seriously. You'll never get out of it alive.\"}",
+    "source": "Elbert Hubbard (1856 - 1915)"
+}
+
+### 
+# Invalid POST /joke 
 POST http://localhost:8000/joke
 content-type: application/json
 

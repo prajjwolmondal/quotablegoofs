@@ -3,10 +3,13 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 
+	"cloud.google.com/go/cloudsqlconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"quotablegooofs.prajjmon.net/internal/models"
 )
@@ -19,14 +22,44 @@ type application struct {
 
 func main() {
 	addr := flag.String("addr", ":8000", "HTTP network address")
-
-	dsn := flag.String("dsn", "postgres://quotablegoof:localdevpassword@localhost:5432/quotablegoofs", "PGX data source name")
-
 	flag.Parse()
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{}))
 
-	dbpool, err := openDbPool(*dsn)
+	var missingRequiredEnvVars []string
+
+	dbUser, err := getEnvVar("DB_USER")
+	if err != nil {
+		missingRequiredEnvVars = append(missingRequiredEnvVars, err.Error())
+		logger.Error(err.Error())
+	}
+
+	dbPwd, err := getEnvVar("DB_PASSWORD")
+	if err != nil {
+		missingRequiredEnvVars = append(missingRequiredEnvVars, err.Error())
+		logger.Error(err.Error())
+	}
+
+	dbName, err := getEnvVar("DB_NAME")
+	if err != nil {
+		missingRequiredEnvVars = append(missingRequiredEnvVars, err.Error())
+		logger.Error(err.Error())
+	}
+
+	instanceConnectionName, err := getEnvVar("INSTANCE_CONNECTION_NAME")
+	if err != nil {
+		missingRequiredEnvVars = append(missingRequiredEnvVars, err.Error())
+		logger.Error(err.Error())
+	}
+
+	if len(missingRequiredEnvVars) > 0 {
+		logger.Info("Please provide missing required environment variables and restart application")
+		os.Exit(1)
+	}
+
+	dsn := fmt.Sprintf("user=%s password=%s database=%s", dbUser, dbPwd, dbName)
+
+	dbpool, err := openDbPool(dsn, instanceConnectionName)
 	if err != nil {
 		logger.Error(err.Error())
 		os.Exit(1)
@@ -54,8 +87,24 @@ func main() {
 	os.Exit(1)
 }
 
-func openDbPool(dsn string) (*pgxpool.Pool, error) {
-	dbpool, err := pgxpool.New(context.Background(), dsn)
+func openDbPool(dsn, instanceConnectionName string) (*pgxpool.Pool, error) {
+
+	config, err := pgxpool.ParseConfig(dsn)
+	if err != nil {
+		return nil, err
+	}
+
+	dialer, err := cloudsqlconn.NewDialer(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	// Tell the driver to use the Cloud SQL Go Connector to create connections
+	config.ConnConfig.DialFunc = func(ctx context.Context, _ string, instance string) (net.Conn, error) {
+		return dialer.Dial(ctx, instanceConnectionName)
+	}
+
+	dbpool, err := pgxpool.NewWithConfig(context.Background(), config)
 	if err != nil {
 		return nil, err
 	}
@@ -63,6 +112,7 @@ func openDbPool(dsn string) (*pgxpool.Pool, error) {
 	err = dbpool.Ping(context.Background())
 	if err != nil {
 		dbpool.Close()
+		dialer.Close()
 		return nil, err
 	}
 
