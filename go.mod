@@ -5,6 +5,7 @@ go 1.23.2
 require (
 	cloud.google.com/go/cloudsqlconn v1.13.1
 	github.com/jackc/pgx/v5 v5.7.1
+	github.com/justinas/alice v1.2.0
 )
 
 require (
