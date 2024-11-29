@@ -1,6 +1,6 @@
 # quotablegoofs
 
-This is a Go webserver that will server as a backend from a couple of mobile apps that I'm developing.
+This is a Go webserver that will serve as a backend from a couple of mobile apps that I'm developing. My aim is not to use any frameworks and instead rely on native go modules for the server functionality. 
 
 Currently these are the goals of this project:
 1. Provide jokes
@@ -24,6 +24,7 @@ Currently these are the goals of this project:
 	- Cloud SQL - hosts the PostgreSQL server
 	- Cloud Run - deploys the server in a container using the images in the Artifact Registry.
 - [REST Client VS code extension](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) - for manual testing of the API (see `api_test.txt` for examples)
+- [`go vet`](https://golang.google.cn/cmd/vet/), [`staticcheck`](https://staticcheck.dev/), and [`golangci-lint`](https://golangci-lint.run/) - Used to analyse the codebase. 
 
 ## Architecture
 
