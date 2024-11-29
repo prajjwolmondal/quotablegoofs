@@ -39,7 +39,7 @@ func (app *application) logRequests(next http.Handler) http.Handler {
 		)
 
 		app.logger.Info(
-			"received request >>> ",
+			"received request >>>",
 			slog.String("ip", ip),
 			slog.String("proto", proto),
 			slog.String("method", method),
