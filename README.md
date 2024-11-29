@@ -25,6 +25,7 @@ Currently these are the goals of this project:
 	- Cloud Run - deploys the server in a container using the images in the Artifact Registry.
 - [REST Client VS code extension](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) - for manual testing of the API (see `api_test.txt` for examples)
 - [`go vet`](https://golang.google.cn/cmd/vet/), [`staticcheck`](https://staticcheck.dev/), and [`golangci-lint`](https://golangci-lint.run/) - Used to analyse the codebase. 
+- [`govulncheck`](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck) - to check for vulnerabilities.
 
 ## Architecture
 
