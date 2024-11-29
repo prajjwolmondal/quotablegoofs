@@ -10,7 +10,7 @@ func (app *application) routes() http.Handler {
 
 	mux := http.NewServeMux()
 
-	chain := alice.New(app.recoverFromPanic, app.logRequests, commonHeaders)
+	chain := alice.New(app.recoverFromPanic, app.logRequests, commonHeaders, securityHeaders)
 
 	// Jokes relalted routes
 	mux.Handle("GET /random-joke", chain.ThenFunc(app.randomJoke))
@@ -23,6 +23,6 @@ func (app *application) routes() http.Handler {
 	mux.Handle("POST /quote", chain.ThenFunc(app.insertQuote))
 
 	// flow of control (left to right) looks like this:
-	// 		recoverFromPanic ↔ logRequest ↔ commonHeaders ↔ servemux ↔ application handler
+	// 		recoverFromPanic ↔ logRequest ↔ commonHeaders ↔ securityHeaders ↔ servemux ↔ application handler
 	return chain.Then(mux)
 }

@@ -14,6 +14,8 @@ func securityHeaders(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Origin", "*")                               // Since we're providing a publicly available API, we're not setting any specific origins
 		w.Header().Set("Access-Control-Allow-Headers", "GET, POST")                      // We're only allowing clients to use these HTTP methods
 		w.Header().Set("Permissions-Policy", "geolocation=(), camera=(), microphone=()") // Disabling theese features as the site doesn't need them
+
+		next.ServeHTTP(w, r)
 	})
 }
 
@@ -21,6 +23,8 @@ func commonHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Server", "Go")
+
+		next.ServeHTTP(w, r)
 	})
 }
 
