@@ -15,9 +15,12 @@ jobs:
 
     - name: Authenticate with GCP
       uses: 'google-github-actions/auth@v2.1.7'
-      with:
+      env:
         gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
         workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+      with:
+        project_id: "$gcp_project_id"
+        workload_identity_provider: "$workload_identity_provider"
 
     - name: "Set up Cloud SDK"
       uses: "google-github-actions/setup-gcloud@v1"
