@@ -41,11 +41,11 @@ jobs:
       run: docker build --tag quotablegoofs .
         
     - name: Tag Docker image
-      with:
+      env:
         artifact_registry_url: ${{ secrets.ARTIFACT_REGISTRY_URL }}
       run: docker tag quotablegoofs "$artifact_registry_url"
 
     - name: Push Docker image to GCP
-      with:
+      env:
         artifact_registry_url: ${{ secrets.ARTIFACT_REGISTRY_URL }}
       run: docker push "$artifact_registry_url"/quotablegoofs
