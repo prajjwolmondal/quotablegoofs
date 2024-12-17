@@ -6,6 +6,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -78,4 +79,22 @@ func (q *QuoteModel) Get(id int) (Quote, error) {
 	}
 
 	return quote, nil
+}
+
+func (q *QuoteModel) GetRandomQuotes(limit int) ([]Quote, error) {
+	sqlStatment := `SELECT * FROM quotes ORDER BY random() LIMIT $1;`
+
+	var quotePointers []*Quote
+
+	err := pgxscan.Select(context.Background(), q.DbPool, &quotePointers, sqlStatment, limit)
+	if err != nil {
+		return []Quote{}, err
+	}
+
+	quotes := make([]Quote, len(quotePointers))
+	for i, qp := range quotePointers {
+		quotes[i] = *qp
+	}
+
+	return quotes, nil
 }

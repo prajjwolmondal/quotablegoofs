@@ -48,8 +48,8 @@ POST http://localhost:8000/quote
 content-type: application/json
 
 {
-    "content": ["Don't take life too seriously. You'll never get out of it alive."],
-    "source": "Elbert Hubbard (1856 - 1915)"
+    "content": ["An ounce of action is worth a ton of theory."],
+    "source": "Friedrich Engels"
 }
 
 ### 
@@ -65,3 +65,13 @@ content-type: application/json
     "created_at": "2024-11-18T17:30:44.770Z",
     "updated_at": "2024-11-18T17:30:44.770Z"
 }
+
+###
+# Get random jokes
+
+GET http://localhost:8000/random-joke?limit=5
+
+###
+# Get random quotes
+
+GET http://localhost:8000/random-quote

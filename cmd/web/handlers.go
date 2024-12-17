@@ -12,20 +12,58 @@ import (
 	"quotablegooofs.prajjmon.net/internal/models"
 )
 
-// TODO: Update this to actually be random
 func (app *application) randomJoke(w http.ResponseWriter, r *http.Request) {
-	joke := `{"joke": ["I told them I wanted to be a comedian, and they laughed; then I became a comedian, no one's laughing now"], "source": "Unknown"}`
+	var limit int
+	if len(r.URL.Query().Get("limit")) == 0 {
+		limit = 1
+	} else {
+		var err error
+		limit, err = strconv.Atoi(r.URL.Query().Get("limit"))
+		if err != nil {
+			app.serverError(w, r, err)
+			return
+		}
+	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(joke))
+	jokes, err := app.jokes.GetRandomJokes(limit)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	jsonJokes, err := json.Marshal(jokes)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+
+	w.Write(jsonJokes)
 }
 
-// TODO: Update this to actually be random
 func (app *application) randomQuote(w http.ResponseWriter, r *http.Request) {
-	quote := `{"quote": "An ounce of action is worth a ton of theory.", "source": "Friedrich Engels"}`
+	var limit int
+	if len(r.URL.Query().Get("limit")) == 0 {
+		limit = 1
+	} else {
+		var err error
+		limit, err = strconv.Atoi(r.URL.Query().Get("limit"))
+		if err != nil {
+			app.serverError(w, r, err)
+			return
+		}
+	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(quote))
+	quotes, err := app.quotes.GetRandomQuotes(limit)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	jsonQuotes, err := json.Marshal(quotes)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+
+	w.Write(jsonQuotes)
 }
 
 func (app *application) getJoke(w http.ResponseWriter, r *http.Request) {
@@ -52,7 +90,6 @@ func (app *application) getJoke(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonJoke)
 }
 
@@ -98,7 +135,6 @@ func (app *application) insertJoke(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(jokeAsJson)
 }
 
@@ -126,7 +162,6 @@ func (app *application) getQuote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonQuote)
 }
 
@@ -172,6 +207,5 @@ func (app *application) insertQuote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(quoteJson)
 }

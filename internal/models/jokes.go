@@ -6,6 +6,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -65,7 +66,6 @@ type JokeModel struct {
 	DbPool *pgxpool.Pool
 }
 
-// Source should be added if its not there
 func (j *JokeModel) Insert(joke Joke) (Joke, error) {
 	sqlStatement := `INSERT INTO jokes(joke_type, content, source, created_at, updated_at) 
 	VALUES ($1, $2, $3, $4, $5) RETURNING id, joke_type, content, source, created_at, updated_at`
@@ -95,4 +95,22 @@ func (j *JokeModel) Get(id int) (Joke, error) {
 	}
 
 	return joke, nil
+}
+
+func (j *JokeModel) GetRandomJokes(limit int) ([]Joke, error) {
+	sqlStatment := `SELECT * FROM jokes ORDER BY random() LIMIT $1;`
+
+	var jokePointers []*Joke
+
+	err := pgxscan.Select(context.Background(), j.DbPool, &jokePointers, sqlStatment, limit)
+	if err != nil {
+		return []Joke{}, err
+	}
+
+	jokes := make([]Joke, len(jokePointers))
+	for i, jp := range jokePointers {
+		jokes[i] = *jp
+	}
+
+	return jokes, nil
 }
