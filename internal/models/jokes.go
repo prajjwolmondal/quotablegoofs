@@ -29,7 +29,7 @@ func (j JokeType) IsValid() bool {
 type Joke struct {
 	Id        int       `json:"id"`
 	JokeType  JokeType  `json:"joke_type"`
-	Content   any       `json:"content"`
+	Content   []string  `json:"content"`
 	Source    string    `json:"source"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
@@ -50,12 +50,8 @@ func (joke *Joke) Validate() []error {
 		errs = append(errs, errors.New("field 'updatedAt' is not allowed in the request body"))
 	}
 
-	if joke.Content == "" {
+	if len(joke.Content) == 0 {
 		errs = append(errs, errors.New("field 'content' cannot be empty"))
-	}
-
-	if joke.Source == "" {
-		errs = append(errs, errors.New("field 'source' cannot be empty, if source isn't known then 'anonymous' or 'unkown' is valid"))
 	}
 
 	if !joke.JokeType.IsValid() {
@@ -69,6 +65,7 @@ type JokeModel struct {
 	DbPool *pgxpool.Pool
 }
 
+// Source should be added if its not there
 func (j *JokeModel) Insert(joke Joke) (Joke, error) {
 	sqlStatement := `INSERT INTO jokes(joke_type, content, source, created_at, updated_at) 
 	VALUES ($1, $2, $3, $4, $5) RETURNING id, joke_type, content, source, created_at, updated_at`

@@ -29,7 +29,6 @@ func (app *application) randomQuote(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) getJoke(w http.ResponseWriter, r *http.Request) {
-
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
 		http.NotFound(w, r)
@@ -40,6 +39,7 @@ func (app *application) getJoke(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, models.ErrNoRecord) {
 			http.NotFound(w, r)
+			return
 		} else {
 			app.serverError(w, r, err)
 			return
@@ -76,6 +76,10 @@ func (app *application) insertJoke(w http.ResponseWriter, r *http.Request) {
 	if errs := joke.Validate(); len(errs) > 0 {
 		app.clientError(w, r, http.StatusBadRequest, errs)
 		return
+	}
+
+	if len(joke.Source) == 0 {
+		joke.Source = "Unknown"
 	}
 
 	now := time.Now()
@@ -146,6 +150,10 @@ func (app *application) insertQuote(w http.ResponseWriter, r *http.Request) {
 	if errs := quote.Validate(); len(errs) > 0 {
 		app.clientError(w, r, http.StatusBadRequest, errs)
 		return
+	}
+
+	if len(quote.Source) == 0 {
+		quote.Source = "Unknown"
 	}
 
 	now := time.Now()

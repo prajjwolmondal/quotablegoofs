@@ -13,6 +13,7 @@ Currently these are the goals of this project:
 ## Tools used
 - Go/golang (v1.23.2)
 - [air-verse/air](https://github.com/air-verse/air) - provide live reload functionality while developing locally
+- [justinas/alice](https://github.com/justinas/alice) - painless middleware chaining
 - PostgreSQL
 	- Used `psql` and [DBeaver](https://dbeaver.com/) for DB commands and GUI.
 - [jackc/pgx](https://github.com/jackc/pgx) - PostgreSQL driver for Go. 
@@ -58,7 +59,7 @@ Table setup:
 create table jokes (
 	id SERIAL NOT NULL PRIMARY KEY ,
 	joke_type VARCHAR(100) NOT NULL,
-	content jsonb NOT NULL,
+	content TEXT[] NOT NULL,
 	source TEXT NOT NULL,
 	created_at TIMESTAMP NOT NULL,
 	updated_at TIMESTAMP NOT null
@@ -66,9 +67,51 @@ create table jokes (
 
 create table quotes (
 	id SERIAL NOT NULL PRIMARY KEY ,
-	content jsonb NOT NULL,
+	content TEXT[] NOT NULL,
 	source TEXT NOT NULL,
 	created_at TIMESTAMP NOT NULL,
 	updated_at TIMESTAMP NOT null
 );
+```
+
+## JSON Schema
+
+Jokes:
+```json
+{
+	"joke_type": "oneLiner",
+	"content": ["I was reading a book titled - The History of Glue - I couldn't put it down."],
+	"source": "Unknown",
+}
+
+{
+	"joke_type": "multiLiner",
+	"content": [
+		"Why did the chicken go to the seance?", 
+		"To talk to the other side."
+	],
+	"source": "Unknown",
+}
+
+{
+	"joke_type": "knockKnock",
+	"content": [
+		"Knock, knock.", 
+		"Who's there?", 
+		"Atch.", 
+		"Atch who?", 
+		"Bless you!"
+	],
+	"source": "Unknown",
+}
+```
+
+Quotes:
+```json
+{
+	"content": [
+		"You don't have to see the whole staircase, just take the first step."
+	],
+	"source": "Martin Luther King Jr.",
+}
 ```

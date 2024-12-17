@@ -11,7 +11,7 @@ import (
 
 type Quote struct {
 	Id        int       `json:"id"`
-	Content   any       `json:"content"`
+	Content   []string  `json:"content"`
 	Source    string    `json:"source"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
@@ -32,12 +32,8 @@ func (quote *Quote) Validate() []error {
 		errs = append(errs, errors.New("field 'updatedAt' is not allowed in the request body"))
 	}
 
-	if quote.Content == "" {
+	if len(quote.Content) == 0 {
 		errs = append(errs, errors.New("field 'content' cannot be empty"))
-	}
-
-	if quote.Source == "" {
-		errs = append(errs, errors.New("field 'source' cannot be empty, if source isn't known then 'anonymous' or 'unkown' is valid"))
 	}
 
 	return errs

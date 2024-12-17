@@ -6,15 +6,14 @@ GET http://localhost:8000/random-joke
 ### 
 GET http://localhost:8000/joke/1
 ###  
-# Valid POST one liner joke
+### Valid POST one liner joke
 
 POST http://localhost:8000/joke
 content-type: application/json
 
 {
     "joke_type": "oneLiner",
-    "content": "{\"text\": \"I hate Russian dolls, they're so full of themselves.\"}",
-    "source": "unknown"
+    "content": ["I hate Russian dolls, they're so full of themselves."]
 }
 
 ### 
@@ -25,8 +24,7 @@ content-type: application/json
 
 {
     "joke_type": "multiLiner",
-    "content": "{\"lines\":  [\"Why did the chicken go to the seance?\", \"To talk to the other side.\"]}",
-    "source": "unknown"
+    "content": ["Why did the chicken go to the seance?", "To talk to the other side."]
 }
 
 ### 
@@ -37,8 +35,7 @@ content-type: application/json
 
 {
     "joke_type": "knockKnock",
-    "content": "{\"lines\": [\"Knock, knock.\", \"Who's there?\", \"Atch.\", \"Atch who?\", \"Bless you!\"]}",
-    "source": "unknown"
+    "content": ["Knock, knock.", "Who's there?", "Atch.", "Atch who?", "Bless you!"],
 }
 
 ### 
@@ -51,7 +48,7 @@ POST http://localhost:8000/quote
 content-type: application/json
 
 {
-    "content": "{\"text\": \"Don't take life too seriously. You'll never get out of it alive.\"}",
+    "content": ["Don't take life too seriously. You'll never get out of it alive."],
     "source": "Elbert Hubbard (1856 - 1915)"
 }
 
@@ -63,7 +60,7 @@ content-type: application/json
 {
     "id": 12,
     "joke_type": "oneLiner",
-    "content": "{\"text\": \"TODO: insert something funny\"}",
+    "content": ["TODO: insert something funny"],
     "source": "Prajjwol",
     "created_at": "2024-11-18T17:30:44.770Z",
     "updated_at": "2024-11-18T17:30:44.770Z"
