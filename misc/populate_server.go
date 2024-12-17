@@ -165,6 +165,8 @@ func populateQuotes() {
 		{Content: []string{"The bad news is time flies. The good news is you're the pilot."}, Source: "Michael Altshuler"},
 		{Content: []string{"There are years that ask questions and years that answer."}, Source: "Zora Neale Hurston"},
 		{Content: []string{"Each of us is more than the worst thing we've ever done."}, Source: "Bryan Stevenson"},
+		{Content: []string{"An ounce of action is worth a ton of theory."}, Source: "Friedrich Engels"},
+		{Content: []string{"Don't take life too seriously. You'll never get out of it alive."}, Source: "Elbert Hubbard"},
 	}
 
 	for r := range quotes {
